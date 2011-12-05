@@ -2,4 +2,12 @@ Spec
 ----------
 Parse through a web access log file and capture browser counts
 
+Usage
+----------
+php runLogAnalysis.php <path_to_log_file>
 
+Returns a CSV formatted report of browsers and counts in log file;
+
+Considerations
+----------
+I used a cursor based file read and looped over each line because I don't know how big the log file is going to be, and I didn't want run into memory issues.

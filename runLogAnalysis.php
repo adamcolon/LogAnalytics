@@ -6,17 +6,32 @@ if(!empty($argv[1])){
 	die("usage: ".__FILE__." <full_path_to_log_file>\n");
 }
 
+/**
+ * 
+ * Main Entry Point
+ * @param string $filename
+ */
 function main($filename){
 	$analytics = new LogAnalytics($filename);
-	$stats = $analytics->getBrowserStats();
-	$csv_report = $analytics->arrayToCSV($stats);
+	$csv_report = $analytics->getBrowserStats();
 	
 	print_r($csv_report);
 }
 
+/**
+ * 
+ * LogAnalytics Class
+ * @author Adam
+ *
+ */
 class LogAnalytics {
 	var $browserStats = array();
 	
+	/**
+	 * 
+	 * construct initiates stats extraction
+	 * @param string $filename
+	 */
 	function __construct($filename){
 		if(file_exists($filename)){
 			$this->extractBrowserStats($filename);
@@ -24,7 +39,12 @@ class LogAnalytics {
 			die("File Does Not Exist [{$filename}]");
 		}
 	}
-	
+
+	/**
+	 * 
+	 * Extracts Browser Stats from log file looping over each line
+	 * @param string $filename
+	 */
 	function extractBrowserStats($filename){
 		if($file_handle = fopen($filename, "r")){
 			while (!feof($file_handle)) {
@@ -37,6 +57,11 @@ class LogAnalytics {
 		}
 	}
 
+	/**
+	 * 
+	 * RegEx Match extract browser info from log line and increment stats count
+	 * @param string $line
+	 */
 	function extractBrowserFromLine($line){
 		// referrer:  Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)
 		$pattern = '/referrer:\s\S*\s(\S*)(.*)$/';
@@ -51,15 +76,16 @@ class LogAnalytics {
 		}
 	}
 	
+	/**
+	 * 
+	 * returns a CSV formatted report given an array of counts keyed by browser  name
+	 * @return array
+	 */
 	function getBrowserStats(){
-		return $this->browserStats;
-	}
-	
-	function arrayToCSV($data_array){
 		$csv_report = "browser,count\n";
 		
-		if($data_array){
-			foreach($data_array as $browser=>$count){
+		if($this->browserStats){
+			foreach($this->browserStats as $browser=>$count){
 				$csv_report .= "{$browser},{$count}\n";
 			}
 		}
